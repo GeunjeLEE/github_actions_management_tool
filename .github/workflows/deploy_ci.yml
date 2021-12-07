@@ -14,12 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: set python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.8'
-      - run: pip install -r requirements.txt
-      - run: echo "PAT_TOKEN=$(echo ${{ secrets.PAT_TOKEN }})" >> $GITHUB_ENV
-      - run: |
+      - name: install requirements
+        run: pip install -r requirements.txt
+      - name: set PAT_TOKEN to env
+        run: echo "PAT_TOKEN=$(echo ${{ secrets.PAT_TOKEN }})" >> $GITHUB_ENV
+      - name: deploy
+        run: |
           if [ ${{ github.event.inputs.repository }} ];
           then
             python src/main.py --group ${{ github.event.inputs.group }} --repo ${{ github.event.inputs.repository }}
