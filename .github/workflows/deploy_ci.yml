@@ -19,6 +19,7 @@ jobs:
           python-version: '3.8'
       - run: pip install -r requirements.txt
       - run: export PAT_TOKEN=${{ secrets.PAT_TOKEN }}
+      - run: env
       - run: |
           if [ ${{ github.event.inputs.repository }} ];
           then
