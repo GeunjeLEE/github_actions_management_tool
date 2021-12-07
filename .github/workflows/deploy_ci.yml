@@ -1,0 +1,23 @@
+name: deploy github action CI
+on:
+  workflow_dispatch:
+    inputs:
+      group:
+        description: '배포할 repository group을 입력하세요.'
+        required: true
+      repository:
+        description: '특정 repository만 필요하다면 입력하세요.'
+        required: false
+        default: ''
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+      - run: pip install -r requirements.txt
+      - run: export PAT_TOKEN=${{ secrets.PAT_TOKEN }}
+      - run: python src/main.py --group ${{ github.event.inputs.group }} --repo ${{ github.event.inputs.repository }}

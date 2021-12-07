@@ -1,0 +1,6 @@
+rTypes:
+  backend:
+    - name: GeunjeLEE/dummy_backend_a
+    - name: GeunjeLEE/dummy_backend_b
+  console:
+    - name: GeunjeLEE/dummy_console_a
