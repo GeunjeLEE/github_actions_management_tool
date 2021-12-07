@@ -8,6 +8,8 @@ on:
       repository:
         description: '[option]특정 repository 지정.'
         required: false
+  repository_dispatch:
+    types: [deploy_githubaction_workflows]
 
 jobs:
   deploy:
@@ -20,13 +22,24 @@ jobs:
           python-version: '3.8'
       - name: install requirements
         run: pip install -r requirements.txt
-      - name: set PAT_TOKEN to env
+      - name: set PAT_TOKEN env
         run: echo "PAT_TOKEN=$(echo ${{ secrets.PAT_TOKEN }})" >> $GITHUB_ENV
+      - name: set repository env
+        run: |
+          if [ ${{ github.event.client_payload.repository }} ];
+          then 
+            echo "repository=${{ github.event.client_payload.repository }}" >> $GITHUB_ENV
+          elif [ ${{ github.event.inputs.repository }} ];
+          then 
+            echo "repository=${{ github.event.inputs.repository }}" >> $GITHUB_ENV
+          else
+            echo "repository=false" >> $GITHUB_ENV
+          fi
       - name: deploy
         run: |
-          if [ ${{ github.event.inputs.repository }} ];
+          if [ ${{ env.repository }} ];
           then
-            python src/main.py --group ${{ github.event.inputs.group }} --repo ${{ github.event.inputs.repository }}
+            python src/main.py --group ${{ github.event.inputs.group }} --repo ${{ env.repository }}
           else
             python src/main.py --group ${{ github.event.inputs.group }}
           fi
