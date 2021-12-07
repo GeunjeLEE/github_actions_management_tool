@@ -51,7 +51,8 @@ def update_file_in_repository(client, repo_name, workflows):
                 ret = repo.update_file(path=contents.path,message="[CI] Update CI",content=content,sha=contents.sha,branch="master")
                 logging.info(f'file has been updated in {repo_name} : {ret}')
     except UnknownObjectException as e:
-        logging.warning(f'failed to update {contents.path} at {repo_name}: {e}')
+        logging.warning(f'failed to update {repo_name}: {e}')
+        logging.warning("Maybe the file doesn't exist. Attempt to create a file")
         create_new_file_in_repository(client, repo_name, workflows)
     except Exception as e:
         raise e
