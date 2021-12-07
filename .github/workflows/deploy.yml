@@ -1,12 +1,12 @@
-name: deploy github action CI
+name: "[CI] deploy workflows"
 on:
   workflow_dispatch:
     inputs:
       group:
-        description: '배포할 repository group을 입력하세요.'
+        description: '배포할 github_action group을 입력하세요.'
         required: true
       repository:
-        description: '특정 repository만 필요하다면 입력하세요.'
+        description: '[option]특정 repository 지정.'
         required: false
 
 jobs:
