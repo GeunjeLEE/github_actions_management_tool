@@ -11,7 +11,6 @@ on:
 jobs:
   pull:
     runs-on: ubuntu-latest
-    needs: pull
     steps:
       - name: git pull
         uses: convictional/trigger-workflow-and-wait@v1.3.0
@@ -29,6 +28,7 @@ jobs:
 
   review:
     runs-on: ubuntu-latest
+    needs: pull
     steps:
       - uses: actions/checkout@v2
       - run: echo "This is dummy CI3"
