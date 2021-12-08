@@ -31,6 +31,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: git pull
-      - run: |
-          git pull origin master
-      - run: echo "This is dummy CI3"
+        run: git pull origin master
+      - run: echo "CI&CD"
