@@ -33,7 +33,7 @@ jobs:
           then 
             echo "repository=${{ github.event.inputs.repository }}" >> $GITHUB_ENV
           else
-            echo "repository=false" >> $GITHUB_ENV
+            echo "repository=" >> $GITHUB_ENV
           fi
       - name: deploy
         run: |
