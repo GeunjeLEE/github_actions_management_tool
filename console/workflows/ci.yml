@@ -9,6 +9,23 @@ on:
         default: v1.2.3-rc1
 
 jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git pull
+        uses: convictional/trigger-workflow-and-wait@v1.3.0
+        with:
+          owner: GeunjeLee
+          repo: github_actions_management_tool
+          github_token: ${{ secrets.PAT_TOKEN }}
+          github_user: github-bot
+          workflow_file_name: deploy.yml
+          ref: master
+          wait_interval: 10
+          inputs: '{"repository": "${{ github.repository }}"}'
+          trigger_workflow: true
+          wait_workflow: true
+
   review:
     runs-on: ubuntu-latest
     steps:

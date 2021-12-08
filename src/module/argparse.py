@@ -15,6 +15,6 @@ def parse_args():
     parser.add_argument('--group', required=True, choices=['backend','console','console-api','plugin'],
                         help='Select workflow group')
     parser.add_argument('--repo', metavar='<specific repository name>',
-                        help='Select a specific repository.')
+                        help='Select specified repository.')
 
     return parser.parse_args()
