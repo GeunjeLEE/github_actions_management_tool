@@ -13,8 +13,8 @@ def main():
     client = Github(token)
 
     config = get_config()
-    rTypes = config.get('rTypes',None)
-    if not rTypes:
+    repo_type = config.get('rTypes',None)
+    if not repo_type:
         logging.error('config file is empty')
         sys.exit(1)
 
@@ -22,7 +22,7 @@ def main():
     specified_repo = args.repo
 
     workflows = get_workflows(group)
-    for repo in rTypes[group]:
+    for repo in repo_type[group]:
         if specified_repo and repo['name'] != specified_repo:
             continue
         repo_name = repo['name']
@@ -72,9 +72,12 @@ def get_config():
 def get_workflows(group):
     workflow_path = f'./{group}/workflows'
     workflow_names = os.listdir(workflow_path)
+    ignore = ['.gitkeep']
 
     github_actions = []
     for workflow_name in workflow_names:
+        if workflow_name in ignore:
+            continue
         github_action_set = {}
         with open(f'{workflow_path}/{workflow_name}','r') as f:
             body = f.read()
