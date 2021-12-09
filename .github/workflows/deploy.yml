@@ -30,6 +30,7 @@ jobs:
   master_push:
     runs-on: ubuntu-latest
     if: ${{ !github.event.inputs.tag }}
+    needs: deploy
     steps:
       - uses: actions/checkout@v2
       - name: Repository Dispatch
@@ -42,6 +43,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.tag }}
+    needs: deploy
     steps:
       - uses: actions/checkout@v2
       - name: Repository Dispatch
