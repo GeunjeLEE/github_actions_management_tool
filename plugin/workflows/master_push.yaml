@@ -1,0 +1,14 @@
+name: "[CI]master push"
+on:
+  repository_dispatch:
+    types: [master_push]
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.job1.outputs.VERSION }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: run_CI
+        run: echo "master_push CI"

@@ -3,18 +3,14 @@ import textwrap
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='Management github action workflows',
+        description='File push to github repository',
         epilog=textwrap.dedent('''\
             Examples:
-                python src/%(prog)s --group all
-                python src/%(prog)s --group plugin
-                python src/%(prog)s --gruop backend --repo spaceone/inventory
+                python src/%(prog)s --repo spaceone/inventory
         '''),
         formatter_class=argparse.RawDescriptionHelpFormatter)
 
-    parser.add_argument('--group', required=True, choices=['backend','console','console-api','plugin'],
-                        help='Select workflow group')
-    parser.add_argument('--repo', metavar='<specific repository name>',
+    parser.add_argument('--repo', required=True, metavar='<owner/repo>',
                         help='Select specified repository.')
 
     return parser.parse_args()
