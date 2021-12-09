@@ -16,21 +16,22 @@ def main():
     except Exception as e:
         raise e
 
-    get_repo_name = ARGS.repo
-    #full_repo_name = f'spaceone/{get_repo_name}'
-    full_repo_name = f'GeunjeLEE/{get_repo_name}'
+    repo_name = ARGS.repo
     try:
-        repo = client.get_repo(full_repo_name)
+        repo = client.get_repo(repo_name)
     except UnknownObjectException as e:
-        logging.error(f'Resource not found : {e}')
+        logging.error(f'Failed to github client creation, Resource not found : {e}')
         sys.exit(1)
     except Exception as e:
         raise e
 
-    group = get_matching_group(client,repo)
+    if ARGS.init:
+        group = 'common'
+    else:
+        group = get_matching_group(repo)
     workflows = get_workflows(group)
 
-    update_file_in_repository(client, repo, workflows)
+    update_file_in_repository(repo, workflows)
 
 def create_new_file_in_repository(repo, workflows):
     try:
