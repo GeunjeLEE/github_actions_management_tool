@@ -1,0 +1,15 @@
+name: "[CI]release"
+on:
+  repository_dispatch:
+    types: [release]
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.job1.outputs.VERSION }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: run_CI
+        run: echo "release CI"
+      - run: echo "${{ github.event.client_payload.tag }}"
