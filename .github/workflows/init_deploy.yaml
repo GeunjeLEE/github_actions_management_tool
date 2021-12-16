@@ -1,7 +1,11 @@
-name: "[CI] init deploy workflows"
+name: "[CI] init deploy"
 
 on:
   workflow_dispatch:
+    inputs:
+      group:
+        description: 'target group'
+        required: true
 
 jobs:
   deploy:
@@ -19,4 +23,4 @@ jobs:
         run: echo "PAT_TOKEN=$(echo ${{ secrets.PAT_TOKEN }})" >> $GITHUB_ENV
       - name: init deploy
         run: |
-          python src/init.py
+          python src/init.py ${{ github.event.inputs.group }}
