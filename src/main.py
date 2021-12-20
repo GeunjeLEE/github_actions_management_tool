@@ -8,34 +8,43 @@ ARGS = ap.parse_args()
 def main():
     token = _get_token()
     client = _get_client(token)
+    init = ARGS.init
 
     if ARGS.repo:
         repo_name = ARGS.repo
-        deploy_to_repository(client, repo_name)
+        deploy_to_repository(client, repo_name, init)
     elif ARGS.group:
         group = ARGS.group
-        deploy_to_group(client, group)
+        deploy_to_group(client, group, init)
     else:
         sys.exit(1)
 
-def deploy_to_repository(client, repo_name):
+def deploy_to_repository(client, repo_name, init):
     repo = _get_repo(client, repo_name)
-    group = _get_matching_group(repo)
-    workflows = _get_workflows(group)
+
+    if init:
+        workflows = _get_workflows('common')
+    else:
+        group = _get_matching_group(repo)
+        workflows = _get_workflows(group)
 
     _deploy(repo, workflows)
 
-def deploy_to_group(client, group):
+def deploy_to_group(client, group, init):
     repo_names = _get_all_repositories(group)
 
     for repo_name in  repo_names:
         repo = _get_repo(client, repo_name)
-        workflows = _get_workflows(group)
+
+        if init:
+            workflows = _get_workflows('common')
+        else:
+            workflows = _get_workflows(group)
 
         _deploy(repo, workflows)
 
-def _deploy(repo, workflows):
-    if ARGS.init:
+def _deploy(repo, workflows, init):
+    if init:
         _delete_all_workflows_in_repository(repo)
         _create_new_file_in_repository(repo, workflows)
     else:
