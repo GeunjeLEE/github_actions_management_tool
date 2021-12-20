@@ -28,7 +28,7 @@ def deploy_to_repository(client, repo_name, init):
         group = _get_matching_group(repo)
         workflows = _get_workflows(group)
 
-    _deploy(repo, workflows)
+    _deploy(repo, workflows, init)
 
 def deploy_to_group(client, group, init):
     repo_names = _get_all_repositories(group)
@@ -41,7 +41,7 @@ def deploy_to_group(client, group, init):
         else:
             workflows = _get_workflows(group)
 
-        _deploy(repo, workflows)
+        _deploy(repo, workflows, init)
 
 def _deploy(repo, workflows, init):
     if init:
