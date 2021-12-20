@@ -1,7 +1,7 @@
 from github import Github
 from github.GithubException import UnknownObjectException,GithubException
 from module import argparse as ap
-import logging, os, sys
+import logging, os, sys, requests, json
 logging.basicConfig(level=logging.INFO)
 ARGS = ap.parse_args()
 
@@ -12,7 +12,7 @@ def main():
     if ARGS.repo:
         repo_name = ARGS.repo
         deploy_to_repository(client, repo_name)
-    else if ARGS.group:
+    elif ARGS.group:
         group = ARGS.group
         deploy_to_group(client, group)
     else:
