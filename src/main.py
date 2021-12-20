@@ -142,13 +142,17 @@ def _get_matching_group(repo):
         if topic in groups:
             return topic
 
-    logging.error(f'There are no matching topics in the workflow group!')
+    logging.error('There are no matching topics in the workflow group!')
     sys.exit(1)
 
 def _get_workflows(group):
-    workflow_path = f'./{group}/workflows'
-    workflow_list = os.listdir(workflow_path)
-    not_workflow_file = ['.gitkeep']
+    try:
+        workflow_path = f'./{group}/workflows'
+        workflow_list = os.listdir(workflow_path)
+        not_workflow_file = ['.gitkeep']
+    except FileNotFoundError as e:
+        logging.error(e)
+        sys.exit(1)
 
     workflows = []
     for workflow_name in workflow_list:
