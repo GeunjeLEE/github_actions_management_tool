@@ -1,4 +1,4 @@
-name: "[CI] init deploy"
+name: "[CI] init group"
 
 on:
   workflow_dispatch:
