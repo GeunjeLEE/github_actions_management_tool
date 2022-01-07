@@ -19,18 +19,26 @@ def main():
     else:
         sys.exit(1)
 
-def deploy_to_repository(client, repo_name, init):
+def deploy_to_repository(client, repo_name, init) -> None:
+    '''
+    Deploy workflows to single repository
+    '''
+
     repo = _get_repo(client, repo_name)
 
     if init:
         workflows = _get_workflows('common')
     else:
-        group = _get_matching_group(repo)
+        group = _get_group_compare_topics(repo)
         workflows = _get_workflows(group)
 
     _deploy(repo, workflows, init)
 
-def deploy_to_group(client, group, init):
+def deploy_to_group(client, group, init) -> None:
+    '''
+    Deploy workflows to group(multiple repositories)
+    '''
+
     repo_names = _get_all_repositories(group)
 
     for repo_name in  repo_names:
@@ -43,14 +51,18 @@ def deploy_to_group(client, group, init):
 
         _deploy(repo, workflows, init)
 
-def _deploy(repo, workflows, init):
+def _deploy(repo, workflows, init) -> None:
     if init:
         _delete_all_workflows_in_repository(repo)
         _create_new_file_in_repository(repo, workflows)
     else:
         _update_file_in_repository(repo, workflows)
 
-def _get_token():
+def _get_token() -> str:
+    '''
+    get PAT_TOKEN from os environment
+    '''
+
     token = os.getenv('PAT_TOKEN',None)
     if not token:
         logging.error('PAT_TOKEN does not set')
@@ -58,13 +70,13 @@ def _get_token():
 
     return token
 
-def _get_client(token):
+def _get_client(token) -> object:
     try:
         return Github(token)
     except Exception as e:
         raise e
 
-def _get_repo(client, repo_name):
+def _get_repo(client, repo_name) -> object:
     try:
         return client.get_repo(repo_name)
     except UnknownObjectException as e:
@@ -73,9 +85,12 @@ def _get_repo(client, repo_name):
     except Exception as e:
         raise e
 
-def _get_all_repositories(group):
-    #url = 'https://api.github.com/orgs/spaceone-dev/repos'
-    url = 'https://api.github.com/users/GeunjeLEE/repos'
+def _get_all_repositories(group) -> list:
+    '''
+    get all repositories from github using github api
+    '''
+
+    url = 'https://api.github.com/orgs/spaceone-dev/repos'
 
     headers = {
         "Accept" : "application/vnd.github.v3+json"
@@ -92,7 +107,11 @@ def _get_all_repositories(group):
 
     return _group_match_filter(group, response)
 
-def _group_match_filter(group, repositories):
+def _group_match_filter(group, repositories) -> list:
+    '''
+    Returns repositories that have topics matching groups
+    '''
+
     result = []
     for repository in repositories:
         if group in repository['topics']:
@@ -104,16 +123,16 @@ def _group_match_filter(group, repositories):
 
     return result
 
-def _delete_all_workflows_in_repository(repo):
+def _delete_all_workflows_in_repository(repo) -> None:
     try:
         contents = repo.get_contents(".github/workflows", ref="master")
         for content in contents:
             message = f'CI: remove workflows ({content.path})'
             repo.delete_file(path=content.path, message=message, sha=content.sha, branch="master")
     except UnknownObjectException as e:
-        print(e)
+        logging.warning(e)
 
-def _create_new_file_in_repository(repo, workflows):
+def _create_new_file_in_repository(repo, workflows) -> None:
     try:
         for workflow in workflows:
             for path,content in workflow.items():
@@ -124,7 +143,7 @@ def _create_new_file_in_repository(repo, workflows):
     except Exception as e:
         raise e
 
-def _update_file_in_repository(repo, workflows):
+def _update_file_in_repository(repo, workflows) -> None:
     try:
         for workflow in workflows:
             for path,content in workflow.items():
@@ -138,14 +157,19 @@ def _update_file_in_repository(repo, workflows):
     except Exception as e:
         raise e
 
-def _get_matching_group(repo):
+def _get_group_compare_topics(repo) -> str:
+    '''
+    Compare group(action directory) and actual repository topic to get matched group name
+    '''
+
     topics = repo.get_topics()
     groups = []
 
-    list_dir = os.listdir('./')
-    for dir in list_dir:
-        if os.path.isdir(dir):
-            groups.append(dir)
+    # group list from current working dir
+    group_list = os.listdir('./')
+    for group in group_list:
+        if os.path.isdir(group):
+            groups.append(group)
 
     for topic in topics:
         if topic in groups:
@@ -154,25 +178,27 @@ def _get_matching_group(repo):
     logging.error('There are no matching topics in the workflow group!')
     sys.exit(1)
 
-def _get_workflows(group):
+def _get_workflows(group) -> list:
     try:
         workflow_path = f'./{group}/workflows'
         workflow_list = os.listdir(workflow_path)
-        not_workflow_file = ['.gitkeep']
     except FileNotFoundError as e:
         logging.error(e)
         sys.exit(1)
+    except Exception as e:
+        raise e
 
     workflows = []
+    ignore_files = ['.gitkeep']
     for workflow_name in workflow_list:
-        if workflow_name in not_workflow_file:
+        if workflow_name in ignore_files:
             continue
         full_workflow_info = _read_workflows(workflow_path, workflow_name)
         workflows.append(full_workflow_info)
 
     return workflows
 
-def _read_workflows(workflow_path, workflow_name):
+def _read_workflows(workflow_path, workflow_name) -> dict:
     workflow_info = {}
     with open(f'{workflow_path}/{workflow_name}','r') as f:
         body = f.read()

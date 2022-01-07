@@ -1,0 +1,20 @@
+name: "[Push|Dispatch] Build dev"
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [master_push]
+
+env:
+  SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_URL}}
+
+jobs:
+  versioning:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.versioning.outputs.VERSION }}
+    steps:
+      - name: check version format
+        run: |
+          echo "release"
+          echo ${{ env.TAG }}
