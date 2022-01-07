@@ -5,7 +5,7 @@ on:
 
 env:
   workflow_file_name: deploy.yaml
-  owner: GeunjeLEE
+  owner: GeunjeLee
   repo: github_actions_management_tool
   ref: master
 
